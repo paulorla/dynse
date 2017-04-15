@@ -1,0 +1,6 @@
+.metadata
+.settings
+.externalToolBuilders
+.recommenders
+/dynse/target
+*.class

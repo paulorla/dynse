@@ -38,7 +38,7 @@ public class KnoraEliminateClassificationEngine implements IClassificationEngine
 			Map<Instance, IMultipleClassifiersCompetence> classifiersMapping,
 			NearestNeighbourSearch nnSearch) throws Exception{
 		
-		Map<DynseClassifier<DynseClassifierPruningMetrics>, Integer> hipMapping = new HashMap<DynseClassifier<DynseClassifierPruningMetrics>, Integer>();
+		Map<DynseClassifier<DynseClassifierPruningMetrics>, Integer> hitMapping = new HashMap<DynseClassifier<DynseClassifierPruningMetrics>, Integer>();
 		Set<DynseClassifier<DynseClassifierPruningMetrics>> selectedClassifiers = new HashSet<DynseClassifier<DynseClassifierPruningMetrics>>();
 		
 		Instances neighbours = nnSearch.kNearestNeighbours(instance, kneighbors);
@@ -51,12 +51,12 @@ public class KnoraEliminateClassificationEngine implements IClassificationEngine
 		for(int j =0; j < neighbours.size(); j++){
 			IMultipleClassifiersCompetence competences = classifiersMapping.get(neighbours.instance(j));
 			for(IClassifierCompetence competence : competences.getClassifiersCompetence()){
-				Integer numHits = hipMapping.get(competence.getClassifier());
+				Integer numHits = hitMapping.get(competence.getClassifier());
 				if(numHits == null)
 					numHits = 1;
 				else
 					numHits++;
-				hipMapping.put(competence.getClassifier(), numHits);
+				hitMapping.put(competence.getClassifier(), numHits);
 				if(numHits >= numNeighborsCorrect){
 					if(!selectedClassifiers.contains(competence.getClassifier())){
 						selectedClassifiers.add(competence.getClassifier());
@@ -70,7 +70,7 @@ public class KnoraEliminateClassificationEngine implements IClassificationEngine
 		if(selectedClassifiers.size() < 1){
 			numNeighborsCorrect--;
 			while(numNeighborsCorrect > 0){
-				for (Map.Entry<DynseClassifier<DynseClassifierPruningMetrics>, Integer> entry : hipMapping.entrySet())
+				for (Map.Entry<DynseClassifier<DynseClassifierPruningMetrics>, Integer> entry : hitMapping.entrySet())
 				{
 				    if(entry.getValue() >= numNeighborsCorrect){
 				    	if(!selectedClassifiers.contains(entry.getKey())){

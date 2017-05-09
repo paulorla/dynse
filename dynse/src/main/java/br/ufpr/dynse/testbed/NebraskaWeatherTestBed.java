@@ -26,15 +26,16 @@ public class NebraskaWeatherTestBed implements MultipleExecutionsTestbed{
 	private UFPRLearningCurveUtils ufprLearningCurveUtils = new UFPRLearningCurveUtils();	
 	
 	@Override
-	public void executeTests(int numeroExecucoes) throws Exception{
-		//this.executeTestsLCA(numeroExecucoes);
-		//this.executeTestsKE(numeroExecucoes);
-		this.executeTestsLeveragingBag(numeroExecucoes);
+	public void executeTests(int numExec) throws Exception{
+		//this.executeTestsLCA(numExec);
+		//this.executeTestsKE(numExec);
+		//this.executeTestsLeveragingBag(numExec);
+		this.executeTestsOLA(numExec);
 	}
 	
-	public void executeTestsLCA(int numeroExecucoes) throws Exception{
-		List<UFPRLearningCurve> learningCurves = new ArrayList<UFPRLearningCurve>(numeroExecucoes);
-		for(int i =0;i < numeroExecucoes; i++){
+	public void executeTestsLCA(int numExec) throws Exception{
+		List<UFPRLearningCurve> learningCurves = new ArrayList<UFPRLearningCurve>(numExec);
+		for(int i =0;i < numExec; i++){
 			System.out.println("Executing " + i);
 			TaskMonitor monitor = new StandardTaskMonitor();
 			EvaluateInterleavedChunksUFPR evaluator = new EvaluateInterleavedChunksUFPR();
@@ -58,9 +59,35 @@ public class NebraskaWeatherTestBed implements MultipleExecutionsTestbed{
 		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(resultadoMedio));
 	}
 	
-	public void executeTestsKE(int numeroExecucoes) throws Exception{
-		List<UFPRLearningCurve> learningCurves = new ArrayList<UFPRLearningCurve>(numeroExecucoes);
-		for(int i =0;i < numeroExecucoes; i++){
+	public void executeTestsOLA(int numExec) throws Exception{
+		List<UFPRLearningCurve> learningCurves = new ArrayList<UFPRLearningCurve>(numExec);
+		for(int i =0;i < numExec; i++){
+			System.out.println("Executing " + i);
+			TaskMonitor monitor = new StandardTaskMonitor();
+			EvaluateInterleavedChunksUFPR evaluator = new EvaluateInterleavedChunksUFPR();
+			
+			ArffFileStream stream = new ArffFileStream();
+			stream.arffFileOption.setValue(PATH_DATASET);
+			
+			StreamDynse dynse = dynseFactory.createDefaultDynseOLA(NUM_SAMPLES_TRAIN_CLASSIFIER);
+			evaluator.learnerOption.setCurrentObject(dynse);
+			
+			evaluator.streamOption.setCurrentObject(stream);
+			evaluator.chunkSizeOption.setValue(NUM_SAMPLES_EACH_BATCH);
+			evaluator.sampleFrequencyOption.setValue(NUM_SAMPLES_EACH_BATCH);
+			evaluator.prepareForUse();
+			
+			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask(monitor, null);
+			learningCurves.add(lc);
+		}
+		UFPRLearningCurve resultadoMedio = ufprLearningCurveUtils.averageResults(learningCurves);
+		
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(resultadoMedio));
+	}
+	
+	public void executeTestsKE(int numExec) throws Exception{
+		List<UFPRLearningCurve> learningCurves = new ArrayList<UFPRLearningCurve>(numExec);
+		for(int i =0;i < numExec; i++){
 			System.out.println("Executing " + i);
 			TaskMonitor monitor = new StandardTaskMonitor();
 			EvaluateInterleavedChunksUFPR evaluator = new EvaluateInterleavedChunksUFPR();
@@ -84,10 +111,10 @@ public class NebraskaWeatherTestBed implements MultipleExecutionsTestbed{
 		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(resultadoMedio));
 	}
 	
-	public void executeTestsLeveragingBag(int numeroExecucoes) throws Exception{
+	public void executeTestsLeveragingBag(int numExec) throws Exception{
 		System.out.println("Executing Leveraging Bag in the Nebraska Dataset");
-		List<UFPRLearningCurve> learningCurves = new ArrayList<UFPRLearningCurve>(numeroExecucoes);
-		for(int i =0;i < numeroExecucoes; i++){
+		List<UFPRLearningCurve> learningCurves = new ArrayList<UFPRLearningCurve>(numExec);
+		for(int i =0;i < numExec; i++){
 			System.out.println("Executing " + i);
 			TaskMonitor monitor = new StandardTaskMonitor();
 			EvaluateInterleavedChunksUFPR evaluator = new EvaluateInterleavedChunksUFPR();

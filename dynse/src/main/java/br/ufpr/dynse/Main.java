@@ -1,15 +1,15 @@
 package br.ufpr.dynse;
 
+import br.ufpr.dynse.testbed.CheckerboardTestbed;
 import br.ufpr.dynse.testbed.MultipleExecutionsTestbed;
-import br.ufpr.dynse.testbed.NistTestbed;
 
 public class Main {
     public static void main( String[] args ) {
     	long startTime = System.currentTimeMillis();
 		
 		try{
-			MultipleExecutionsTestbed testBed = new NistTestbed();
-			testBed.executeTests(10);
+			MultipleExecutionsTestbed testBed = new CheckerboardTestbed();
+			testBed.executeTests(3);
 		}catch(Exception e){
 			e.printStackTrace();
 		}

@@ -28,7 +28,8 @@ public class GaussianTestbed implements MultipleExecutionsTestbed{
 
 	public void executeTests(int numberExecutions) throws Exception{
 		//this.executeTestsKnoraEliminate(numberExecutions);
-		this.executeTestsLCA(numberExecutions);
+		//this.executeTestsLCA(numberExecutions);
+		this.executeTestsOLA(numberExecutions);
 	}
 	
 	public void executeTestsKnoraEliminate(int numberExecutions) throws Exception{
@@ -73,6 +74,40 @@ public class GaussianTestbed implements MultipleExecutionsTestbed{
 			GaussianTestUFPR evaluator = new GaussianTestUFPR();
 			
 			StreamDynse streamKnoraDriftHandler = dynseFactory.createDefaultDynseLCA(Constants.NUM_INST_TRAIN_GAUSS_POLIKAR); 
+			evaluator.learnerOption.setCurrentObject(streamKnoraDriftHandler);
+			
+			ArffFileStream trainStream = new ArffFileStream();
+			trainStream.arffFileOption.setValue(PATH_TRAIN_FILE);
+			trainStream.prepareForUse();
+			
+			ArffFileStream testStream = new ArffFileStream();
+			testStream.arffFileOption.setValue(PATH_TEST_FILE);
+			testStream.prepareForUse();
+			
+			List<Double[]> priors = GaussianElwellPolikarConverter.readPriorsTest(PATH_PRIORS);
+			
+			evaluator.setTrainStream(trainStream);
+			evaluator.setTestStream(testStream);
+			evaluator.setPriors(priors);
+			
+			evaluator.prepareForUse();
+			
+			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask(monitor, null);
+			learningCurves.add(lc);
+		}
+		UFPRLearningCurve resultadoMedio = ufprLearningCurveUtils.averageResults(learningCurves);
+		
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(resultadoMedio));
+	}
+	
+	public void executeTestsOLA(int numberExecutions) throws Exception{
+		List<UFPRLearningCurve> learningCurves = new ArrayList<UFPRLearningCurve>(numberExecutions);
+		for(int i =0;i < numberExecutions; i++){
+			System.out.println("Executing " + i);
+			TaskMonitor monitor = new StandardTaskMonitor();
+			GaussianTestUFPR evaluator = new GaussianTestUFPR();
+			
+			StreamDynse streamKnoraDriftHandler = dynseFactory.createDefaultDynseOLA(Constants.NUM_INST_TRAIN_GAUSS_POLIKAR); 
 			evaluator.learnerOption.setCurrentObject(streamKnoraDriftHandler);
 			
 			ArffFileStream trainStream = new ArffFileStream();

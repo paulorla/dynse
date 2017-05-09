@@ -2,12 +2,7 @@ package br.ufpr.dynse.constant;
 
 import java.math.BigDecimal;
 
-public class Constants {
-	public static final int NUM_INST_TRAIN_CLASSIFIER_STAGGER = 20;
-	public static final int NUM_INST_TEST_CLASSIFIER_STAGGER = 200;
-	public static final int NUM_TOTAL_INST_TEST_STAGGER = (NUM_INST_TRAIN_CLASSIFIER_STAGGER + 
-			NUM_INST_TEST_CLASSIFIER_STAGGER)*40;
-	
+public class Constants {	
 	public static final int NUM_INST_TRAIN_CLASSIFIER_VIRTUAL_TEST = 50;
 	public static final int NUM_INST_TEST_CLASSIFIER_VIRTUAL_TEST = 50;
 	

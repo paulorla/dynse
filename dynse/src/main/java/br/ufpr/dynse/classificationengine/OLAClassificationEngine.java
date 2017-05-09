@@ -1,6 +1,7 @@
 package br.ufpr.dynse.classificationengine;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -13,70 +14,80 @@ import br.ufpr.dynse.classifier.DynseClassifier;
 import br.ufpr.dynse.classifier.MajorityVoting;
 import br.ufpr.dynse.classifier.competence.IClassifierCompetence;
 import br.ufpr.dynse.classifier.competence.IMultipleClassifiersCompetence;
-import br.ufpr.dynse.neighborsearch.LinearClassNNSearch;
 import br.ufpr.dynse.pruningengine.DynseClassifierPruningMetrics;
+import moa.classifiers.Classifier;
+import moa.classifiers.lazy.neighboursearch.LinearNNSearch;
 import moa.classifiers.lazy.neighboursearch.NearestNeighbourSearch;
 import moa.core.Utils;
 
-public class LCAClassificationEngine implements IClassificationEngine<IMultipleClassifiersCompetence>{
+public class OLAClassificationEngine implements IClassificationEngine<IMultipleClassifiersCompetence>{
 
 	private static final long serialVersionUID = 1L;
 	
-	private int kneighbors;
+	private int kNeighbors;
 	private MajorityVoting<DynseClassifier<DynseClassifierPruningMetrics>> classifierCombiner;
 	private List<DynseClassifier<DynseClassifierPruningMetrics>> classifiersUsedInLastClassification;
 	
-	public LCAClassificationEngine(int kNeighbors) {
-		this.kneighbors = kNeighbors;
+	public OLAClassificationEngine(int kNeighbors) {
+		this.kNeighbors = kNeighbors;
 		
 		this.classifierCombiner = new MajorityVoting<DynseClassifier<DynseClassifierPruningMetrics>>();
 	}
-	
+
 	@Override
 	public double[] classify(Instance instance, List<DynseClassifier<DynseClassifierPruningMetrics>> availableClassifiers,
-			Map<Instance, IMultipleClassifiersCompetence> competenceMapping, NearestNeighbourSearch nnSearch) throws Exception{
-		List<DynseClassifier<DynseClassifierPruningMetrics>> selectedClassifiers = new ArrayList<DynseClassifier<DynseClassifierPruningMetrics>>();
-		int bestAccuracy = 0;
-		boolean classifiersAgree = true;
-		double agreedClass = Double.NEGATIVE_INFINITY;
-		double[] distribution = null;
+			Map<Instance, IMultipleClassifiersCompetence> classifiersMapping,
+			NearestNeighbourSearch nnSearch) throws Exception{
 		
-		for(DynseClassifier<DynseClassifierPruningMetrics> c: availableClassifiers){
+		double agreedClass = -1.0;
+		boolean allClassifiersAgree = true;
+		double[] distribution = null;
+		for(Classifier c :availableClassifiers){
 			distribution = c.getVotesForInstance(instance);
-			double classGivenForInstance = Utils.maxIndex(distribution);
-			if(classGivenForInstance != agreedClass){
-				if(agreedClass == Double.NEGATIVE_INFINITY)
-					agreedClass = classGivenForInstance;
-				else
-					classifiersAgree = false;
-			}
-			
-			Instances neighbors = ((LinearClassNNSearch)nnSearch).kNearestNeighbours(instance, kneighbors, classGivenForInstance);
-			int currentAccuracy = 0;
-			
-			for(int j =0; j < neighbors.numInstances(); j++){
-				IMultipleClassifiersCompetence classifiersCompetence = competenceMapping.get(neighbors.instance(j));
-				for(IClassifierCompetence cc : classifiersCompetence.getClassifiersCompetence()){
-					if(cc.getClassifier().equals(c)){
-						currentAccuracy++;
-						break;
-					}
+			double classGiven = Utils.maxIndex(distribution);
+			if(classGiven != agreedClass){
+				if(agreedClass == -1.0){
+					agreedClass = classGiven;
+				}else{
+					allClassifiersAgree = false;
+					break;
 				}
 			}
-			if(currentAccuracy > bestAccuracy){
-				bestAccuracy = currentAccuracy;
-				selectedClassifiers.clear();
-				selectedClassifiers.add(c);
-			}else{
-				if(currentAccuracy > 0 && currentAccuracy == bestAccuracy)
-					selectedClassifiers.add(c);
-			}
 		}
-		if(classifiersAgree == true){//se todos concordam, pode-se retornar a resposta de qualquer um
+		if(allClassifiersAgree == true){//If all agree, we may return any of the results
 			classifiersUsedInLastClassification = availableClassifiers;
 			this.increaseClassifiersFactor(availableClassifiers);
-			//return distribution;
 			return availableClassifiers.get(0).getVotesForInstance(instance);
+		}
+		
+		Map<DynseClassifier<DynseClassifierPruningMetrics>, Integer> hitMap = new HashMap<DynseClassifier<DynseClassifierPruningMetrics>, Integer>();
+		List<DynseClassifier<DynseClassifierPruningMetrics>> selectedClassifiers = new ArrayList<DynseClassifier<DynseClassifierPruningMetrics>>();
+		
+		Instances neighbours = nnSearch.kNearestNeighbours(instance, kNeighbors);
+		
+		for(int j =0; j < neighbours.numInstances(); j++){
+			IMultipleClassifiersCompetence classifiersCompetence = classifiersMapping.get(neighbours.instance(j));
+			for(IClassifierCompetence cc : classifiersCompetence.getClassifiersCompetence()){
+				Integer numHits = hitMap.get(cc.getClassifier());
+				if(numHits == null)
+					numHits = 1;
+				else
+					numHits++;
+				hitMap.put(cc.getClassifier(), numHits);
+			}
+		}
+		
+		double bestAccuracy = -1;
+		for (Map.Entry<DynseClassifier<DynseClassifierPruningMetrics>, Integer> entry : hitMap.entrySet())
+		{
+		    if(entry.getValue() > bestAccuracy){
+		    	selectedClassifiers.clear();
+		    	selectedClassifiers.add(entry.getKey());
+		    	bestAccuracy = entry.getValue(); 
+		    }else{
+		    	if(entry.getValue() == bestAccuracy)
+		    		selectedClassifiers.add(entry.getKey());
+		    }
 		}
 		
 		double[] result;
@@ -89,7 +100,6 @@ public class LCAClassificationEngine implements IClassificationEngine<IMultipleC
 			result = classifierCombiner.distributionForInstance(instance, selectedClassifiers);
 			this.decreaseClassifiersFactor(availableClassifiers);
 		}
-		
 		return result;
 	}
 	
@@ -115,7 +125,7 @@ public class LCAClassificationEngine implements IClassificationEngine<IMultipleC
 
 	@Override
 	public NearestNeighbourSearch createNeighborSearchMethod() {
-		return new LinearClassNNSearch();
+		return new LinearNNSearch();
 	}
 	
 	@Override
@@ -130,20 +140,21 @@ public class LCAClassificationEngine implements IClassificationEngine<IMultipleC
 	
 	@Override
 	public void getClassificationEngineDescription(StringBuilder out) {
-		out.append("LCA\n");
+		out.append("OLA\n");
 		out.append("Neighbors: ");
-		out.append(kneighbors);
+		out.append(kNeighbors);
 		out.append("\n");
+		out.append("Combination rule: ");
 		out.append("Combination rule: Majority Voting");
 	}
 	
 	@Override
 	public void getClassificationEngineShortDescription(StringBuilder out) {
-		out.append("LCA" + kneighbors);
+		out.append("OLA" + kNeighbors);
 	}
 
 	@Override
 	public void reset() {
-		this.classifiersUsedInLastClassification = null;		
+		this.classifiersUsedInLastClassification = null;
 	}
 }

@@ -1,15 +1,15 @@
 package br.ufpr.dynse;
 
-import br.ufpr.dynse.testbed.CheckerboardTestbed;
 import br.ufpr.dynse.testbed.MultipleExecutionsTestbed;
+import br.ufpr.dynse.testbed.NebraskaWeatherTestBed;
 
 public class Main {
     public static void main( String[] args ) {
     	long startTime = System.currentTimeMillis();
 		
 		try{
-			MultipleExecutionsTestbed testBed = new CheckerboardTestbed();
-			testBed.executeTests(3);
+			MultipleExecutionsTestbed testBed = new NebraskaWeatherTestBed();
+			testBed.executeTests(1);
 		}catch(Exception e){
 			e.printStackTrace();
 		}

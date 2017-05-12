@@ -22,9 +22,12 @@ public class ForestCoverTypeTestBed implements MultipleExecutionsTestbed{
 	private final AbstractDynseFactory dynseFactory = new RealConceptDriftDynseFactory();
 	
 	@Override
-	public void executeTests(int numberExecutions) throws Exception{
-		//this.executeTestsKE(numberExecutions);
-		this.executeTestsLCA(numberExecutions);
+	public void executeTests(int numExec) throws Exception{
+		//this.executeTestsKE(numExec);
+		//this.executeTestsLCA(numExec);
+		//this.executeTestsOLA(numExec);
+		//this.executeTestsAPriori(numExec);
+		//this.executeTestsAPosteriori(numExec);
 	}
 	
 	public void executeTestsKE(int numberExecutions) throws Exception{
@@ -97,6 +100,66 @@ public class ForestCoverTypeTestBed implements MultipleExecutionsTestbed{
 			stream.arffFileOption.setValue(PATH_DATASET);
 			
 			StreamDynse streamKnoraDriftHandler = dynseFactory.createDefaultDynseOLA(Constants.NUM_INST_TRAIN_CLASSIFIER_FOREST);
+			evaluator.learnerOption.setCurrentObject(streamKnoraDriftHandler);
+			
+			StringBuilder builder = new StringBuilder();
+			streamKnoraDriftHandler.getShortDescription(builder, 0);
+			System.out.println("Running " + i + " " + builder);
+			
+			evaluator.streamOption.setCurrentObject(stream);
+			evaluator.testSizeOption.setValue(Constants.NUM_INST_TEST_CLASSIFIER_FOREST);
+			evaluator.sampleFrequencyOption.setValue(Constants.NUM_INST_TRAIN_CLASSIFIER_FOREST);
+			evaluator.prepareForUse();
+			
+			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask(monitor, null);
+			System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(lc));
+			learningCurves.add(lc);
+		}
+		
+		UFPRLearningCurve resultadoMedio = ufprLearningCurveUtils.averageResults(learningCurves);
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(resultadoMedio));
+	}
+	
+	public void executeTestsAPriori(int numExec) throws Exception{
+		List<UFPRLearningCurve> learningCurves = new ArrayList<UFPRLearningCurve>(numExec);
+		for(int i =0;i < numExec; i++){
+			TaskMonitor monitor = new StandardTaskMonitor();
+			EvaluatePeriodicHeldOutTestUFPR evaluator = new EvaluatePeriodicHeldOutTestUFPR();
+			
+			ArffFileStream stream = new ArffFileStream();
+			stream.arffFileOption.setValue(PATH_DATASET);
+			
+			StreamDynse streamKnoraDriftHandler = dynseFactory.createDefaultDynseAPriori(Constants.NUM_INST_TRAIN_CLASSIFIER_FOREST);
+			evaluator.learnerOption.setCurrentObject(streamKnoraDriftHandler);
+			
+			StringBuilder builder = new StringBuilder();
+			streamKnoraDriftHandler.getShortDescription(builder, 0);
+			System.out.println("Running " + i + " " + builder);
+			
+			evaluator.streamOption.setCurrentObject(stream);
+			evaluator.testSizeOption.setValue(Constants.NUM_INST_TEST_CLASSIFIER_FOREST);
+			evaluator.sampleFrequencyOption.setValue(Constants.NUM_INST_TRAIN_CLASSIFIER_FOREST);
+			evaluator.prepareForUse();
+			
+			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask(monitor, null);
+			System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(lc));
+			learningCurves.add(lc);
+		}
+		
+		UFPRLearningCurve resultadoMedio = ufprLearningCurveUtils.averageResults(learningCurves);
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(resultadoMedio));
+	}
+	
+	public void executeTestsAPosteriori(int numExec) throws Exception{
+		List<UFPRLearningCurve> learningCurves = new ArrayList<UFPRLearningCurve>(numExec);
+		for(int i =0;i < numExec; i++){
+			TaskMonitor monitor = new StandardTaskMonitor();
+			EvaluatePeriodicHeldOutTestUFPR evaluator = new EvaluatePeriodicHeldOutTestUFPR();
+			
+			ArffFileStream stream = new ArffFileStream();
+			stream.arffFileOption.setValue(PATH_DATASET);
+			
+			StreamDynse streamKnoraDriftHandler = dynseFactory.createDefaultDynseAPosteriori(Constants.NUM_INST_TRAIN_CLASSIFIER_FOREST);
 			evaluator.learnerOption.setCurrentObject(streamKnoraDriftHandler);
 			
 			StringBuilder builder = new StringBuilder();

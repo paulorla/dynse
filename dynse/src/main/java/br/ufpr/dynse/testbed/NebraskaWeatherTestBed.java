@@ -30,7 +30,9 @@ public class NebraskaWeatherTestBed implements MultipleExecutionsTestbed{
 		//this.executeTestsLCA(numExec);
 		//this.executeTestsKE(numExec);
 		//this.executeTestsLeveragingBag(numExec);
-		this.executeTestsOLA(numExec);
+		//this.executeTestsOLA(numExec);
+		//this.executeTestsAPriori(numExec);
+		this.executeTestsAPosteriori(numExec);
 	}
 	
 	public void executeTestsLCA(int numExec) throws Exception{
@@ -70,6 +72,58 @@ public class NebraskaWeatherTestBed implements MultipleExecutionsTestbed{
 			stream.arffFileOption.setValue(PATH_DATASET);
 			
 			StreamDynse dynse = dynseFactory.createDefaultDynseOLA(NUM_SAMPLES_TRAIN_CLASSIFIER);
+			evaluator.learnerOption.setCurrentObject(dynse);
+			
+			evaluator.streamOption.setCurrentObject(stream);
+			evaluator.chunkSizeOption.setValue(NUM_SAMPLES_EACH_BATCH);
+			evaluator.sampleFrequencyOption.setValue(NUM_SAMPLES_EACH_BATCH);
+			evaluator.prepareForUse();
+			
+			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask(monitor, null);
+			learningCurves.add(lc);
+		}
+		UFPRLearningCurve resultadoMedio = ufprLearningCurveUtils.averageResults(learningCurves);
+		
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(resultadoMedio));
+	}
+	
+	public void executeTestsAPriori(int numExec) throws Exception{
+		List<UFPRLearningCurve> learningCurves = new ArrayList<UFPRLearningCurve>(numExec);
+		for(int i =0;i < numExec; i++){
+			System.out.println("Executing " + i);
+			TaskMonitor monitor = new StandardTaskMonitor();
+			EvaluateInterleavedChunksUFPR evaluator = new EvaluateInterleavedChunksUFPR();
+			
+			ArffFileStream stream = new ArffFileStream();
+			stream.arffFileOption.setValue(PATH_DATASET);
+			
+			StreamDynse dynse = dynseFactory.createDefaultDynseAPriori(NUM_SAMPLES_TRAIN_CLASSIFIER);
+			evaluator.learnerOption.setCurrentObject(dynse);
+			
+			evaluator.streamOption.setCurrentObject(stream);
+			evaluator.chunkSizeOption.setValue(NUM_SAMPLES_EACH_BATCH);
+			evaluator.sampleFrequencyOption.setValue(NUM_SAMPLES_EACH_BATCH);
+			evaluator.prepareForUse();
+			
+			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask(monitor, null);
+			learningCurves.add(lc);
+		}
+		UFPRLearningCurve resultadoMedio = ufprLearningCurveUtils.averageResults(learningCurves);
+		
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(resultadoMedio));
+	}
+
+	public void executeTestsAPosteriori(int numExec) throws Exception{
+		List<UFPRLearningCurve> learningCurves = new ArrayList<UFPRLearningCurve>(numExec);
+		for(int i =0;i < numExec; i++){
+			System.out.println("Executing " + i);
+			TaskMonitor monitor = new StandardTaskMonitor();
+			EvaluateInterleavedChunksUFPR evaluator = new EvaluateInterleavedChunksUFPR();
+			
+			ArffFileStream stream = new ArffFileStream();
+			stream.arffFileOption.setValue(PATH_DATASET);
+			
+			StreamDynse dynse = dynseFactory.createDefaultDynseAPosteriori(NUM_SAMPLES_TRAIN_CLASSIFIER);
 			evaluator.learnerOption.setCurrentObject(dynse);
 			
 			evaluator.streamOption.setCurrentObject(stream);

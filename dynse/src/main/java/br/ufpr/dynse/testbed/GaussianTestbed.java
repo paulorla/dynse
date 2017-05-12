@@ -26,10 +26,12 @@ public class GaussianTestbed implements MultipleExecutionsTestbed{
 	private static final String PATH_PRIORS = "/home/paulo/Projetos/experimentos-doutorado/DriftGeneratorsAndData/gaussianDataPolikar/Gaussian_testing_priors.csv";
 	
 
-	public void executeTests(int numberExecutions) throws Exception{
-		//this.executeTestsKnoraEliminate(numberExecutions);
-		//this.executeTestsLCA(numberExecutions);
-		this.executeTestsOLA(numberExecutions);
+	public void executeTests(int numberExec) throws Exception{
+		//this.executeTestsKnoraEliminate(numberExec);
+		//this.executeTestsLCA(numberExec);
+		this.executeTestsOLA(numberExec);
+		//this.executeTestsAPriori(numExec);
+		//this.executeTestsAPosteriori(numberExec);
 	}
 	
 	public void executeTestsKnoraEliminate(int numberExecutions) throws Exception{
@@ -108,6 +110,74 @@ public class GaussianTestbed implements MultipleExecutionsTestbed{
 			GaussianTestUFPR evaluator = new GaussianTestUFPR();
 			
 			StreamDynse streamKnoraDriftHandler = dynseFactory.createDefaultDynseOLA(Constants.NUM_INST_TRAIN_GAUSS_POLIKAR); 
+			evaluator.learnerOption.setCurrentObject(streamKnoraDriftHandler);
+			
+			ArffFileStream trainStream = new ArffFileStream();
+			trainStream.arffFileOption.setValue(PATH_TRAIN_FILE);
+			trainStream.prepareForUse();
+			
+			ArffFileStream testStream = new ArffFileStream();
+			testStream.arffFileOption.setValue(PATH_TEST_FILE);
+			testStream.prepareForUse();
+			
+			List<Double[]> priors = GaussianElwellPolikarConverter.readPriorsTest(PATH_PRIORS);
+			
+			evaluator.setTrainStream(trainStream);
+			evaluator.setTestStream(testStream);
+			evaluator.setPriors(priors);
+			
+			evaluator.prepareForUse();
+			
+			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask(monitor, null);
+			learningCurves.add(lc);
+		}
+		UFPRLearningCurve resultadoMedio = ufprLearningCurveUtils.averageResults(learningCurves);
+		
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(resultadoMedio));
+	}
+	
+	public void executeTestsAPriori(int numExec) throws Exception{
+		List<UFPRLearningCurve> learningCurves = new ArrayList<UFPRLearningCurve>(numExec);
+		for(int i =0;i < numExec; i++){
+			System.out.println("Executing " + i);
+			TaskMonitor monitor = new StandardTaskMonitor();
+			GaussianTestUFPR evaluator = new GaussianTestUFPR();
+			
+			StreamDynse streamKnoraDriftHandler = dynseFactory.createDefaultDynseAPriori(Constants.NUM_INST_TRAIN_GAUSS_POLIKAR); 
+			evaluator.learnerOption.setCurrentObject(streamKnoraDriftHandler);
+			
+			ArffFileStream trainStream = new ArffFileStream();
+			trainStream.arffFileOption.setValue(PATH_TRAIN_FILE);
+			trainStream.prepareForUse();
+			
+			ArffFileStream testStream = new ArffFileStream();
+			testStream.arffFileOption.setValue(PATH_TEST_FILE);
+			testStream.prepareForUse();
+			
+			List<Double[]> priors = GaussianElwellPolikarConverter.readPriorsTest(PATH_PRIORS);
+			
+			evaluator.setTrainStream(trainStream);
+			evaluator.setTestStream(testStream);
+			evaluator.setPriors(priors);
+			
+			evaluator.prepareForUse();
+			
+			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask(monitor, null);
+			learningCurves.add(lc);
+		}
+		UFPRLearningCurve resultadoMedio = ufprLearningCurveUtils.averageResults(learningCurves);
+		
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(resultadoMedio));
+	}
+	
+	public void executeTestsAPosteriori(int numExec) throws Exception{
+		List<UFPRLearningCurve> learningCurves = new ArrayList<UFPRLearningCurve>(numExec);
+		for(int i =0;i < numExec; i++){
+			System.out.println("Executing " + i);
+			TaskMonitor monitor = new StandardTaskMonitor();
+			GaussianTestUFPR evaluator = new GaussianTestUFPR();
+			
+			StreamDynse streamKnoraDriftHandler = dynseFactory.createDefaultDynseAPosteriori(Constants.NUM_INST_TRAIN_GAUSS_POLIKAR); 
 			evaluator.learnerOption.setCurrentObject(streamKnoraDriftHandler);
 			
 			ArffFileStream trainStream = new ArffFileStream();

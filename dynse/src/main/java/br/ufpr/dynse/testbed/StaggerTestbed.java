@@ -28,6 +28,8 @@ public class StaggerTestbed implements MultipleExecutionsTestbed{
 		//this.executeTestsDynseKE(numExec);
 		//this.executeTestsDynseLCA(numExec);
 		this.executeTestsDynseOLA(numExec);
+		//this.executeTestsDynseAPriori(numExec);
+		//this.executeTestsDynseAPosteriori(numExec);
 	}
 	
 	public void executeTestsLeveragingBag(int numExec) throws Exception{
@@ -114,6 +116,56 @@ public class StaggerTestbed implements MultipleExecutionsTestbed{
 			EvaluatePeriodicHeldOutTestUFPR evaluator = new EvaluatePeriodicHeldOutTestUFPR();
 			
 			StreamDynse streamKnoraDriftHandler = dynseFactory.createDefaultDynseOLA(StaggerDriftGenerator.NUM_INST_TRAIN_CLASSIFIER_STAGGER);
+			evaluator.learnerOption.setCurrentObject(streamKnoraDriftHandler);
+			
+			evaluator.streamOption.setCurrentObject(new StaggerDriftGenerator(random.nextInt()));
+			evaluator.trainSizeOption.setValue((StaggerDriftGenerator.NUM_INST_TRAIN_CLASSIFIER_STAGGER + 
+					StaggerDriftGenerator.NUM_INST_TEST_CLASSIFIER_STAGGER)*10*4);
+			evaluator.testSizeOption.setValue(StaggerDriftGenerator.NUM_INST_TEST_CLASSIFIER_STAGGER);
+			evaluator.sampleFrequencyOption.setValue(StaggerDriftGenerator.NUM_INST_TRAIN_CLASSIFIER_STAGGER);
+			evaluator.prepareForUse();
+			
+			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask(monitor, null);
+			learningCurves.add(lc);
+		}
+		UFPRLearningCurve resultadoMedio = ufprLearningCurveUtils.averageResults(learningCurves);		
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(resultadoMedio));
+	}
+	
+	public void executeTestsDynseAPriori(int numExec) throws Exception{
+		List<UFPRLearningCurve> learningCurves = new ArrayList<UFPRLearningCurve>(numExec);
+		
+		for(int i =0;i < numExec; i++){
+			System.out.println("Executing StreamDynse A Priori - Exec.: " + i);
+			TaskMonitor monitor = new StandardTaskMonitor();
+			EvaluatePeriodicHeldOutTestUFPR evaluator = new EvaluatePeriodicHeldOutTestUFPR();
+			
+			StreamDynse streamKnoraDriftHandler = dynseFactory.createDefaultDynseAPriori(StaggerDriftGenerator.NUM_INST_TRAIN_CLASSIFIER_STAGGER);
+			evaluator.learnerOption.setCurrentObject(streamKnoraDriftHandler);
+			
+			evaluator.streamOption.setCurrentObject(new StaggerDriftGenerator(random.nextInt()));
+			evaluator.trainSizeOption.setValue((StaggerDriftGenerator.NUM_INST_TRAIN_CLASSIFIER_STAGGER + 
+					StaggerDriftGenerator.NUM_INST_TEST_CLASSIFIER_STAGGER)*10*4);
+			evaluator.testSizeOption.setValue(StaggerDriftGenerator.NUM_INST_TEST_CLASSIFIER_STAGGER);
+			evaluator.sampleFrequencyOption.setValue(StaggerDriftGenerator.NUM_INST_TRAIN_CLASSIFIER_STAGGER);
+			evaluator.prepareForUse();
+			
+			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask(monitor, null);
+			learningCurves.add(lc);
+		}
+		UFPRLearningCurve resultadoMedio = ufprLearningCurveUtils.averageResults(learningCurves);		
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(resultadoMedio));
+	}
+	
+	public void executeTestsDynseAPosteriori(int numExec) throws Exception{
+		List<UFPRLearningCurve> learningCurves = new ArrayList<UFPRLearningCurve>(numExec);
+		
+		for(int i =0;i < numExec; i++){
+			System.out.println("Executing StreamDynse A Posteriori - Exec.: " + i);
+			TaskMonitor monitor = new StandardTaskMonitor();
+			EvaluatePeriodicHeldOutTestUFPR evaluator = new EvaluatePeriodicHeldOutTestUFPR();
+			
+			StreamDynse streamKnoraDriftHandler = dynseFactory.createDefaultDynseAPosteriori(StaggerDriftGenerator.NUM_INST_TRAIN_CLASSIFIER_STAGGER);
 			evaluator.learnerOption.setCurrentObject(streamKnoraDriftHandler);
 			
 			evaluator.streamOption.setCurrentObject(new StaggerDriftGenerator(random.nextInt()));

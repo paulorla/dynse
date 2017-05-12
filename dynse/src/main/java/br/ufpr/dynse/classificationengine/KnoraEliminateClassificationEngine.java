@@ -98,7 +98,6 @@ public class KnoraEliminateClassificationEngine implements IClassificationEngine
 			result = classifierCombiner.distributionForInstance(instance, selectedClassifiers);
 			this.decreaseClassifiersFactor(availableClassifiers);
 		}
-		
 		return result;
 	}
 	

@@ -3,6 +3,7 @@ package br.ufpr.dynse.classifier.factory;
 import br.ufpr.dynse.classificationengine.APrioriClassificationEngine;
 import br.ufpr.dynse.classificationengine.IClassificationEngine;
 import br.ufpr.dynse.classificationengine.KnoraEliminateClassificationEngine;
+import br.ufpr.dynse.classificationengine.KnoraUnionClassificationEngine;
 import br.ufpr.dynse.classificationengine.LCAClassificationEngine;
 import br.ufpr.dynse.classificationengine.OLAClassificationEngine;
 import br.ufpr.dynse.classifier.competence.IMultipleClassifiersCompetence;
@@ -15,8 +16,11 @@ public abstract class AbstractDynseFactory {
 	
 		public static final int DEFAULT_NEIGHBORS_KE = 9;
 		public static final int DEFAULT_SLACK_KE = 2;
+		public static final int DEFAULT_NEIGHBORS_KU = 5;
+		
 		public static final int DEFAULT_NEIGHBORS_LCA = 5;
 		public static final int DEFAULT_NEIGHBORS_OLA = 5;
+		
 		public static final int DEFAULT_NEIGHBORS_APRIORI = 5;
 		public static final int DEFAULT_NEIGHBORS_APOSTERIORI = 5;
 		
@@ -42,6 +46,16 @@ public abstract class AbstractDynseFactory {
 						classificationEngine, DEFAULT_PRUNING_ENGINE);
 				
 				return dynse;
+		}
+		
+		public StreamDynse createDefaultDynseKU(int numInstancesTrainEachClassifierV) throws Exception{
+			IClassificationEngine<IMultipleClassifiersCompetence> classificationEngine = 
+					new KnoraUnionClassificationEngine(DEFAULT_NEIGHBORS_KU);
+			StreamDynse dynse = new StreamDynse(classifierFactory,
+					numInstancesTrainEachClassifierV, getDefaultAccuracyEstimationWindowSize(),
+					classificationEngine, DEFAULT_PRUNING_ENGINE);
+			
+			return dynse;
 		}
 		
 		public StreamDynse createDefaultDynseLCA(int numInstancesTrainEachClassifierV) throws Exception{

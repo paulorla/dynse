@@ -30,9 +30,10 @@ public class NebraskaWeatherTestBed implements MultipleExecutionsTestbed{
 		//this.executeTestsLCA(numExec);
 		//this.executeTestsKE(numExec);
 		//this.executeTestsLeveragingBag(numExec);
-		//this.executeTestsOLA(numExec);
+		this.executeTestsOLA(numExec);
 		//this.executeTestsAPriori(numExec);
-		this.executeTestsAPosteriori(numExec);
+		//this.executeTestsAPosteriori(numExec);
+		//this.executeTestsKU(numExec);
 	}
 	
 	public void executeTestsLCA(int numExec) throws Exception{
@@ -56,9 +57,9 @@ public class NebraskaWeatherTestBed implements MultipleExecutionsTestbed{
 			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask(monitor, null);
 			learningCurves.add(lc);
 		}
-		UFPRLearningCurve resultadoMedio = ufprLearningCurveUtils.averageResults(learningCurves);
+		UFPRLearningCurve avgResult = ufprLearningCurveUtils.averageResults(learningCurves);
 		
-		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(resultadoMedio));
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(avgResult));
 	}
 	
 	public void executeTestsOLA(int numExec) throws Exception{
@@ -82,9 +83,9 @@ public class NebraskaWeatherTestBed implements MultipleExecutionsTestbed{
 			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask(monitor, null);
 			learningCurves.add(lc);
 		}
-		UFPRLearningCurve resultadoMedio = ufprLearningCurveUtils.averageResults(learningCurves);
+		UFPRLearningCurve avgResult = ufprLearningCurveUtils.averageResults(learningCurves);
 		
-		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(resultadoMedio));
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(avgResult));
 	}
 	
 	public void executeTestsAPriori(int numExec) throws Exception{
@@ -108,9 +109,9 @@ public class NebraskaWeatherTestBed implements MultipleExecutionsTestbed{
 			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask(monitor, null);
 			learningCurves.add(lc);
 		}
-		UFPRLearningCurve resultadoMedio = ufprLearningCurveUtils.averageResults(learningCurves);
+		UFPRLearningCurve avgResult = ufprLearningCurveUtils.averageResults(learningCurves);
 		
-		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(resultadoMedio));
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(avgResult));
 	}
 
 	public void executeTestsAPosteriori(int numExec) throws Exception{
@@ -134,9 +135,35 @@ public class NebraskaWeatherTestBed implements MultipleExecutionsTestbed{
 			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask(monitor, null);
 			learningCurves.add(lc);
 		}
-		UFPRLearningCurve resultadoMedio = ufprLearningCurveUtils.averageResults(learningCurves);
+		UFPRLearningCurve avgResult = ufprLearningCurveUtils.averageResults(learningCurves);
 		
-		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(resultadoMedio));
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(avgResult));
+	}
+	
+	public void executeTestsKU(int numExec) throws Exception{
+		List<UFPRLearningCurve> learningCurves = new ArrayList<UFPRLearningCurve>(numExec);
+		for(int i =0;i < numExec; i++){
+			System.out.println("Executing " + i);
+			TaskMonitor monitor = new StandardTaskMonitor();
+			EvaluateInterleavedChunksUFPR evaluator = new EvaluateInterleavedChunksUFPR();
+			
+			ArffFileStream stream = new ArffFileStream();
+			stream.arffFileOption.setValue(PATH_DATASET);
+			
+			StreamDynse dynse = dynseFactory.createDefaultDynseKU(NUM_SAMPLES_TRAIN_CLASSIFIER);
+			evaluator.learnerOption.setCurrentObject(dynse);
+			
+			evaluator.streamOption.setCurrentObject(stream);
+			evaluator.chunkSizeOption.setValue(NUM_SAMPLES_EACH_BATCH);
+			evaluator.sampleFrequencyOption.setValue(NUM_SAMPLES_EACH_BATCH);
+			evaluator.prepareForUse();
+			
+			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask(monitor, null);
+			learningCurves.add(lc);
+		}
+		UFPRLearningCurve avgResult = ufprLearningCurveUtils.averageResults(learningCurves);
+		
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(avgResult));
 	}
 	
 	public void executeTestsKE(int numExec) throws Exception{
@@ -160,9 +187,9 @@ public class NebraskaWeatherTestBed implements MultipleExecutionsTestbed{
 			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask(monitor, null);
 			learningCurves.add(lc);
 		}
-		UFPRLearningCurve resultadoMedio = ufprLearningCurveUtils.averageResults(learningCurves);
+		UFPRLearningCurve avgResult = ufprLearningCurveUtils.averageResults(learningCurves);
 		
-		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(resultadoMedio));
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(avgResult));
 	}
 	
 	public void executeTestsLeveragingBag(int numExec) throws Exception{
@@ -187,8 +214,8 @@ public class NebraskaWeatherTestBed implements MultipleExecutionsTestbed{
 			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask(monitor, null);
 			learningCurves.add(lc);
 		}
-		UFPRLearningCurve resultadoMedio = ufprLearningCurveUtils.averageResults(learningCurves);
+		UFPRLearningCurve avgResult = ufprLearningCurveUtils.averageResults(learningCurves);
 		
-		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(resultadoMedio));
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(avgResult));
 	}
 }

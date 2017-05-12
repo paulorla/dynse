@@ -30,6 +30,7 @@ public class NistTestbed implements MultipleExecutionsTestbed{
 		//this.executeTestsLeveragingBag(numExec);
 		//this.executeTestsAccuracyUpdatedEnsemble(numExec);
 		//this.executeTestsOzaAdwin(numExec);
+		//this.executeTestsKU(numExec);
 	}
 	
 	public void executeTestsKnoraEliminate(int numExec) throws Exception{
@@ -56,9 +57,9 @@ public class NistTestbed implements MultipleExecutionsTestbed{
 			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask();
 			learningCurves.add(lc);
 		}
-		UFPRLearningCurve resultadoMedio = ufprLearningCurveUtils.averageResults(learningCurves);
+		UFPRLearningCurve avgResult = ufprLearningCurveUtils.averageResults(learningCurves);
 		
-		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(resultadoMedio));
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(avgResult));
 	}
 	
 	public void executeTestsOLA(int numExec) throws Exception{
@@ -85,9 +86,38 @@ public class NistTestbed implements MultipleExecutionsTestbed{
 			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask();
 			learningCurves.add(lc);
 		}
-		UFPRLearningCurve resultadoMedio = ufprLearningCurveUtils.averageResults(learningCurves);
+		UFPRLearningCurve avgResult = ufprLearningCurveUtils.averageResults(learningCurves);
 		
-		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(resultadoMedio));
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(avgResult));
+	}
+	
+	public void executeTestsKU(int numExec) throws Exception{
+		List<UFPRLearningCurve> learningCurves = new ArrayList<UFPRLearningCurve>(numExec);
+		for(int i =0;i < numExec; i++){
+			EvaluatePeriodicHeldOutTestUFPR evaluator = new EvaluatePeriodicHeldOutTestUFPR();
+			
+			StreamDynse streamKnoraDriftHandler = dynseFactory.createDefaultDynseKU(Constants.NUM_INST_TRAIN_CLASSIFIER_VIRTUAL_TEST);
+			evaluator.learnerOption.setCurrentObject(streamKnoraDriftHandler);
+			
+			StringBuilder builder = new StringBuilder();
+			streamKnoraDriftHandler.getShortDescription(builder, 0);
+			System.out.println("Executing " + i + ": "+ builder);
+			
+			PxDriftGenerator pxDriftGenerator = new PxDriftGenerator(Constants.NUM_INST_TRAIN_CLASSIFIER_VIRTUAL_TEST, 
+					Constants.NUM_INST_TEST_CLASSIFIER_VIRTUAL_TEST, PATH_DATASET);
+			
+			evaluator.streamOption.setCurrentObject(pxDriftGenerator);
+			evaluator.trainSizeOption.setValue(0);
+			evaluator.sampleFrequencyOption.setValue(Constants.NUM_INST_TRAIN_CLASSIFIER_VIRTUAL_TEST);
+			evaluator.testSizeOption.setValue(Constants.NUM_INST_TEST_CLASSIFIER_VIRTUAL_TEST);
+			evaluator.prepareForUse();
+			
+			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask();
+			learningCurves.add(lc);
+		}
+		UFPRLearningCurve avgResult = ufprLearningCurveUtils.averageResults(learningCurves);
+		
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(avgResult));
 	}
 	
 	public void executeTestsAPriori(int numExec) throws Exception{
@@ -114,9 +144,9 @@ public class NistTestbed implements MultipleExecutionsTestbed{
 			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask();
 			learningCurves.add(lc);
 		}
-		UFPRLearningCurve resultadoMedio = ufprLearningCurveUtils.averageResults(learningCurves);
+		UFPRLearningCurve avgResult = ufprLearningCurveUtils.averageResults(learningCurves);
 		
-		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(resultadoMedio));
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(avgResult));
 	}
 	
 	public void executeTestsAPosteriori(int numExec) throws Exception{
@@ -143,9 +173,9 @@ public class NistTestbed implements MultipleExecutionsTestbed{
 			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask();
 			learningCurves.add(lc);
 		}
-		UFPRLearningCurve resultadoMedio = ufprLearningCurveUtils.averageResults(learningCurves);
+		UFPRLearningCurve avgResult = ufprLearningCurveUtils.averageResults(learningCurves);
 		
-		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(resultadoMedio));
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(avgResult));
 	}
 	
 	public void executeTestsLeveragingBag(int numExec) throws Exception{
@@ -170,9 +200,9 @@ public class NistTestbed implements MultipleExecutionsTestbed{
 			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask();
 			learningCurves.add(lc);
 		}
-		UFPRLearningCurve resultadoMedio = ufprLearningCurveUtils.averageResults(learningCurves);
+		UFPRLearningCurve avgResult = ufprLearningCurveUtils.averageResults(learningCurves);
 		
-		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(resultadoMedio));
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(avgResult));
 	}
 	
 	public void executeTestsAccuracyUpdatedEnsemble(int numExec) throws Exception{
@@ -198,9 +228,9 @@ public class NistTestbed implements MultipleExecutionsTestbed{
 			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask();
 			learningCurves.add(lc);
 		}
-		UFPRLearningCurve resultadoMedio = ufprLearningCurveUtils.averageResults(learningCurves);
+		UFPRLearningCurve avgResult = ufprLearningCurveUtils.averageResults(learningCurves);
 		
-		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(resultadoMedio));
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(avgResult));
 	}
 	
 	public void executeTestsOzaAdwin(int numExec) throws Exception{
@@ -227,8 +257,8 @@ public class NistTestbed implements MultipleExecutionsTestbed{
 			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask();
 			learningCurves.add(lc);
 		}
-		UFPRLearningCurve resultadoMedio = ufprLearningCurveUtils.averageResults(learningCurves);
+		UFPRLearningCurve avgResult = ufprLearningCurveUtils.averageResults(learningCurves);
 		
-		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(resultadoMedio));
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(avgResult));
 	}
 }

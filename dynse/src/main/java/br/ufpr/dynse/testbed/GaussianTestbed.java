@@ -33,6 +33,7 @@ public class GaussianTestbed implements MultipleExecutionsTestbed{
 		//this.executeTestsAPriori(numExec);
 		//this.executeTestsAPosteriori(numberExec);
 		//this.executeTestsKU(numberExec);
+		//this.executeTestsKU(numberExec);
 	}
 	
 	public void executeTestsKnoraEliminate(int numberExecutions) throws Exception{
@@ -145,6 +146,40 @@ public class GaussianTestbed implements MultipleExecutionsTestbed{
 			GaussianTestUFPR evaluator = new GaussianTestUFPR();
 			
 			StreamDynse streamKnoraDriftHandler = dynseFactory.createDefaultDynseKU(Constants.NUM_INST_TRAIN_GAUSS_POLIKAR); 
+			evaluator.learnerOption.setCurrentObject(streamKnoraDriftHandler);
+			
+			ArffFileStream trainStream = new ArffFileStream();
+			trainStream.arffFileOption.setValue(PATH_TRAIN_FILE);
+			trainStream.prepareForUse();
+			
+			ArffFileStream testStream = new ArffFileStream();
+			testStream.arffFileOption.setValue(PATH_TEST_FILE);
+			testStream.prepareForUse();
+			
+			List<Double[]> priors = GaussianElwellPolikarConverter.readPriorsTest(PATH_PRIORS);
+			
+			evaluator.setTrainStream(trainStream);
+			evaluator.setTestStream(testStream);
+			evaluator.setPriors(priors);
+			
+			evaluator.prepareForUse();
+			
+			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask(monitor, null);
+			learningCurves.add(lc);
+		}
+		UFPRLearningCurve avgResult = ufprLearningCurveUtils.averageResults(learningCurves);
+		
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(avgResult));
+	}
+	
+	public void executeTestsKUW(int numberExecutions) throws Exception{
+		List<UFPRLearningCurve> learningCurves = new ArrayList<UFPRLearningCurve>(numberExecutions);
+		for(int i =0;i < numberExecutions; i++){
+			System.out.println("Executing " + i);
+			TaskMonitor monitor = new StandardTaskMonitor();
+			GaussianTestUFPR evaluator = new GaussianTestUFPR();
+			
+			StreamDynse streamKnoraDriftHandler = dynseFactory.createDefaultDynseKUW(Constants.NUM_INST_TRAIN_GAUSS_POLIKAR); 
 			evaluator.learnerOption.setCurrentObject(streamKnoraDriftHandler);
 			
 			ArffFileStream trainStream = new ArffFileStream();

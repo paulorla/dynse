@@ -30,6 +30,7 @@ public class StaggerTestbed implements MultipleExecutionsTestbed{
 		//this.executeTestsDynseKU(numExec);
 		//this.executeTestsDynseLCA(numExec);
 		this.executeTestsDynseOLA(numExec);
+		//this.executeTestsDynseKUW(numExec);
 		//this.executeTestsDynseAPriori(numExec);
 		//this.executeTestsDynseAPosteriori(numExec);
 	}
@@ -93,6 +94,31 @@ public class StaggerTestbed implements MultipleExecutionsTestbed{
 			EvaluatePeriodicHeldOutTestUFPR evaluator = new EvaluatePeriodicHeldOutTestUFPR();
 			
 			StreamDynse streamKnoraDriftHandler = dynseFactory.createDefaultDynseKU(StaggerDriftGenerator.NUM_INST_TRAIN_CLASSIFIER_STAGGER);
+			evaluator.learnerOption.setCurrentObject(streamKnoraDriftHandler);
+			
+			evaluator.streamOption.setCurrentObject(new StaggerDriftGenerator(random.nextInt()));
+			evaluator.trainSizeOption.setValue((StaggerDriftGenerator.NUM_INST_TRAIN_CLASSIFIER_STAGGER + 
+					StaggerDriftGenerator.NUM_INST_TEST_CLASSIFIER_STAGGER)*10*4);
+			evaluator.testSizeOption.setValue(StaggerDriftGenerator.NUM_INST_TEST_CLASSIFIER_STAGGER);
+			evaluator.sampleFrequencyOption.setValue(StaggerDriftGenerator.NUM_INST_TRAIN_CLASSIFIER_STAGGER);
+			evaluator.prepareForUse();
+			
+			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask(monitor, null);
+			learningCurves.add(lc);
+		}
+		UFPRLearningCurve avgResult = ufprLearningCurveUtils.averageResults(learningCurves);		
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(avgResult));
+	}
+	
+	public void executeTestsDynseKUW(int numExec) throws Exception{
+		List<UFPRLearningCurve> learningCurves = new ArrayList<UFPRLearningCurve>(numExec);
+		
+		for(int i =0;i < numExec; i++){
+			System.out.println("Executing StreamDynse KUW - Exec.: " + i);
+			TaskMonitor monitor = new StandardTaskMonitor();
+			EvaluatePeriodicHeldOutTestUFPR evaluator = new EvaluatePeriodicHeldOutTestUFPR();
+			
+			StreamDynse streamKnoraDriftHandler = dynseFactory.createDefaultDynseKUW(StaggerDriftGenerator.NUM_INST_TRAIN_CLASSIFIER_STAGGER);
 			evaluator.learnerOption.setCurrentObject(streamKnoraDriftHandler);
 			
 			evaluator.streamOption.setCurrentObject(new StaggerDriftGenerator(random.nextInt()));

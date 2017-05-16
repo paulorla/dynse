@@ -29,6 +29,7 @@ public class SeaConceptsTestbed implements MultipleExecutionsTestbed{
 		//this.executeTestsDynseKE(numExec);
 		//this.executeTestsDynseLCA(numExec);
 		this.executeTestsDynseOLA(numExec);
+		//this.executeTestsDynseKUW(numExec);
 		//this.executeTestsDynseAPriori(numExec);
 		//this.executeTestsDynseAPosteriori(numExec);
 		//this.executeTestsDynseKU(numExec);
@@ -92,6 +93,30 @@ public class SeaConceptsTestbed implements MultipleExecutionsTestbed{
 			EvaluatePeriodicHeldOutTestUFPR evaluator = new EvaluatePeriodicHeldOutTestUFPR();
 			
 			StreamDynse streamKnoraDriftHandler = dynseFactory.createDefaultDynseKU(Constants.NUM_INST_TRAIN_TEST_SEA);
+			evaluator.learnerOption.setCurrentObject(streamKnoraDriftHandler);
+			
+			evaluator.streamOption.setCurrentObject(new SeaDriftGenerator(random.nextInt()));
+			evaluator.trainSizeOption.setValue(50000);
+			evaluator.testSizeOption.setValue(Constants.NUM_INST_TRAIN_TEST_SEA);
+			evaluator.sampleFrequencyOption.setValue(Constants.NUM_INST_TRAIN_TEST_SEA);
+			evaluator.prepareForUse();
+			
+			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask(monitor, null);
+			learningCurves.add(lc);
+		}
+		UFPRLearningCurve avgResult = ufprLearningCurveUtils.averageResults(learningCurves);		
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(avgResult));
+	}
+	
+	public void executeTestsDynseKUW(int numExec) throws Exception{
+		List<UFPRLearningCurve> learningCurves = new ArrayList<UFPRLearningCurve>(numExec);
+		
+		for(int i =0;i < numExec; i++){
+			System.out.println("Executing StreamDynse KUW - Exec.: " + i);
+			TaskMonitor monitor = new StandardTaskMonitor();
+			EvaluatePeriodicHeldOutTestUFPR evaluator = new EvaluatePeriodicHeldOutTestUFPR();
+			
+			StreamDynse streamKnoraDriftHandler = dynseFactory.createDefaultDynseKUW(Constants.NUM_INST_TRAIN_TEST_SEA);
 			evaluator.learnerOption.setCurrentObject(streamKnoraDriftHandler);
 			
 			evaluator.streamOption.setCurrentObject(new SeaDriftGenerator(random.nextInt()));

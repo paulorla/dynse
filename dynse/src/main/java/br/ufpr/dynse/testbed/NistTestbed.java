@@ -17,7 +17,7 @@ import moa.classifiers.meta.OzaBagAdwin;
 
 public class NistTestbed implements MultipleExecutionsTestbed{
 	
-	private static final String PATH_DATASET = "/home/paulo/Projetos/experimentos-doutorado/DriftGeneratorsAndData/nist/nist.arff";
+	private static final String PATH_DATASET = "/home/paulo/Projetos/experimentos-doutorado/DriftGeneratorsAndData/nist/nist-norm.arff";
 	
 	private UFPRLearningCurveUtils ufprLearningCurveUtils = new UFPRLearningCurveUtils();
 	private final AbstractDynseFactory dynseFactory = new VirtualConceptDriftDynseFactory();
@@ -25,6 +25,7 @@ public class NistTestbed implements MultipleExecutionsTestbed{
 	public void executeTests(int numExec) throws Exception{
 		//this.executeTestsKnoraEliminate(numExec);
 		this.executeTestsOLA(numExec);
+		//this.executeTestsKUW(numExec);
 		//this.executeTestsAPriori(numExec);
 		//this.executeTestsAPosteriori(numExec);
 		//this.executeTestsLeveragingBag(numExec);
@@ -97,6 +98,35 @@ public class NistTestbed implements MultipleExecutionsTestbed{
 			EvaluatePeriodicHeldOutTestUFPR evaluator = new EvaluatePeriodicHeldOutTestUFPR();
 			
 			StreamDynse streamKnoraDriftHandler = dynseFactory.createDefaultDynseKU(Constants.NUM_INST_TRAIN_CLASSIFIER_VIRTUAL_TEST);
+			evaluator.learnerOption.setCurrentObject(streamKnoraDriftHandler);
+			
+			StringBuilder builder = new StringBuilder();
+			streamKnoraDriftHandler.getShortDescription(builder, 0);
+			System.out.println("Executing " + i + ": "+ builder);
+			
+			PxDriftGenerator pxDriftGenerator = new PxDriftGenerator(Constants.NUM_INST_TRAIN_CLASSIFIER_VIRTUAL_TEST, 
+					Constants.NUM_INST_TEST_CLASSIFIER_VIRTUAL_TEST, PATH_DATASET);
+			
+			evaluator.streamOption.setCurrentObject(pxDriftGenerator);
+			evaluator.trainSizeOption.setValue(0);
+			evaluator.sampleFrequencyOption.setValue(Constants.NUM_INST_TRAIN_CLASSIFIER_VIRTUAL_TEST);
+			evaluator.testSizeOption.setValue(Constants.NUM_INST_TEST_CLASSIFIER_VIRTUAL_TEST);
+			evaluator.prepareForUse();
+			
+			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask();
+			learningCurves.add(lc);
+		}
+		UFPRLearningCurve avgResult = ufprLearningCurveUtils.averageResults(learningCurves);
+		
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(avgResult));
+	}
+	
+	public void executeTestsKUW(int numExec) throws Exception{
+		List<UFPRLearningCurve> learningCurves = new ArrayList<UFPRLearningCurve>(numExec);
+		for(int i =0;i < numExec; i++){
+			EvaluatePeriodicHeldOutTestUFPR evaluator = new EvaluatePeriodicHeldOutTestUFPR();
+			
+			StreamDynse streamKnoraDriftHandler = dynseFactory.createDefaultDynseKUW(Constants.NUM_INST_TRAIN_CLASSIFIER_VIRTUAL_TEST);
 			evaluator.learnerOption.setCurrentObject(streamKnoraDriftHandler);
 			
 			StringBuilder builder = new StringBuilder();

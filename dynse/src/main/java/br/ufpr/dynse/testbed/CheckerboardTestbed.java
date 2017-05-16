@@ -34,6 +34,7 @@ public class CheckerboardTestbed implements MultipleExecutionsTestbed{
 		//this.executeTestsAPriori(numExecutions);
 		//this.executeTestsAPosteriori(numExecutions);
 		//this.executeTestsKU(numExecutions);
+		//this.executeTestsKUW(numExecutions);
 	}
 	
 	public void executeTestsDynseKE(int numExecutions) throws Exception{
@@ -97,6 +98,32 @@ public class CheckerboardTestbed implements MultipleExecutionsTestbed{
 			EvaluatePeriodicHeldOutTestUFPR evaluator = new EvaluatePeriodicHeldOutTestUFPR();
 			
 			StreamDynse streamKnoraDriftHandler = dynseFactory.createDefaultDynseOLA(Constants.NUM_INST_TRAIN_CLASSIFIER_CHECKERBOARD);
+			evaluator.learnerOption.setCurrentObject(streamKnoraDriftHandler);
+			
+			ArffFileStream stream = new ArffFileStream();
+			stream.arffFileOption.setValue(PATH_CHECKERBOARD);
+			evaluator.streamOption.setCurrentObject(stream);
+			
+			evaluator.sampleFrequencyOption.setValue(Constants.NUM_INST_TRAIN_CLASSIFIER_CHECKERBOARD);
+			evaluator.testSizeOption.setValue(Constants.NUM_INST_TEST_CLASSIFIER_CHECKERBOARD);
+			evaluator.prepareForUse();
+			
+			UFPRLearningCurve lc = (UFPRLearningCurve)evaluator.doTask(monitor, null);
+			learningCurves.add(lc);
+		}
+		UFPRLearningCurve resultadoMedio = ufprLearningCurveUtils.averageResults(learningCurves);		
+		System.out.println(ufprLearningCurveUtils.strMainStatisticsMatlab(resultadoMedio));
+	}
+	
+	public void executeTestsKUW(int numExecutions) throws Exception{
+		List<UFPRLearningCurve> learningCurves = new ArrayList<UFPRLearningCurve>(numExecutions);
+		
+		for(int i =0;i < numExecutions; i++){
+			System.out.println("Running StreamDynse OLA - Exec.: " + i);
+			TaskMonitor monitor = new StandardTaskMonitor();
+			EvaluatePeriodicHeldOutTestUFPR evaluator = new EvaluatePeriodicHeldOutTestUFPR();
+			
+			StreamDynse streamKnoraDriftHandler = dynseFactory.createDefaultDynseKUW(Constants.NUM_INST_TRAIN_CLASSIFIER_CHECKERBOARD);
 			evaluator.learnerOption.setCurrentObject(streamKnoraDriftHandler);
 			
 			ArffFileStream stream = new ArffFileStream();

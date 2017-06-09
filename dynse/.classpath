@@ -22,6 +22,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/opt/moa/moa-release-2016.04/moa-release-2016.04/lib/sizeofag-1.0.0.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

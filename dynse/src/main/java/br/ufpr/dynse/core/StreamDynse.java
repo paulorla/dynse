@@ -20,7 +20,9 @@ package br.ufpr.dynse.core;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.yahoo.labs.samoa.instances.Instance;
 
@@ -42,6 +44,8 @@ public class StreamDynse extends AbstractDynse<LinkedList<Instance>, IMultipleCl
 		implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	
+	private Random random = ThreadLocalRandom.current();
 
 	private boolean updateNNSearch;
 	private DynseClassifier<DynseClassifierPruningMetrics> clasifierTrainedIncompleteBatch = null;
@@ -159,9 +163,13 @@ public class StreamDynse extends AbstractDynse<LinkedList<Instance>, IMultipleCl
 		if (updateNNSearch == true){
 			this.updateNNSearch();
 		}else{
-			if(super.getNumClassifiersPool() < 1
-					&& super.getTrainInstancesAccumulator().size() < 1 && super.getAccuracyEstimationInstances().size() < 1)
-				return new double[0];//No classifier trained
+			if(super.getNumClassifiersPool() < 1  && super.getTrainInstancesAccumulator().size() < 1 && super.getAccuracyEstimationInstances().size() < 1) {
+				//No classifier trained
+				int majorityIndex = random.nextInt(instance.classAttribute().numValues());
+				double[] probs = new double[instance.classAttribute().numValues()];
+				probs[majorityIndex] = 1; // guess randomly
+				return probs;
+			}
 		}
 		if (classifierTrainedIncompleteBatchIsUpdated == false && super.getTrainInstancesAccumulator().size() > 0) {
 			if (clasifierTrainedIncompleteBatch != null) {

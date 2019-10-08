@@ -151,7 +151,6 @@ public class EvaluatePeriodicHeldOutTestUFPR extends EvaluatePeriodicHeldOutTest
 					break;
 				}
                 Example testInst = (Example) testStream.nextInstance();
-                double trueClass = ((Instance) testInst.getData()).classValue();
                 double[] prediction = learner.getVotesForInstance(testInst);
                 //testInst.setClassValue(trueClass);
                 evaluator.addResult(testInst, prediction);

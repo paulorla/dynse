@@ -34,7 +34,7 @@ import moa.classifiers.meta.OzaBagAdwin;
 
 public class LettersTestbed implements MultipleExecutionsTestbed{
 	
-	private static final String PATH_DATASET = "/home/paulo/Projetos/experimentos-doutorado/DriftGeneratorsAndData/letters/letters.arff";
+	private static final String PATH_DATASET = "PATH_LETTERS_HERE/letters.arff";
 	
 	private UFPRLearningCurveUtils ufprLearningCurveUtils = new UFPRLearningCurveUtils();
 	private final AbstractDynseFactory dynseFactory = new VirtualConceptDriftDynseFactory();

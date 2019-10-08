@@ -38,10 +38,12 @@ import br.ufpr.dynse.instance.ConceptInstance;
 import br.ufpr.dynse.pruningengine.DynseClassifierPruningMetrics;
 import br.ufpr.dynse.pruningengine.IPruningEngine;
 import br.ufpr.dynse.util.InstancesUtils;
+import moa.capabilities.CapabilitiesHandler;
+import moa.classifiers.MultiClassClassifier;
 import moa.core.Utils;
 
 public class StreamDynse extends AbstractDynse<LinkedList<Instance>, IMultipleClassifiersCompetence>
-		implements Serializable {
+		implements MultiClassClassifier, CapabilitiesHandler, Serializable {
 
 	private static final long serialVersionUID = 1L;
 	

@@ -36,9 +36,9 @@ public class CheckerboardTestbed implements MultipleExecutionsTestbed{
 	private final AbstractDynseFactory dynseFactory = new RealConceptDriftDynseFactory();
 	
 	static{
-		//PATH_CHECKERBOARD = "/home/paulo/Projetos/experimentos-doutorado/DriftGeneratorsAndData/checkerboard_data/CBconstant.arff";		
-		//PATH_CHECKERBOARD = "/home/paulo/Projetos/experimentos-doutorado/DriftGeneratorsAndData/checkerboard_data/CBpulse.arff";
-		PATH_CHECKERBOARD = "/home/paulo/Projetos/experimentos-doutorado/DriftGeneratorsAndData/checkerboard_data/CBsinusoidal.arff";
+		//PATH_CHECKERBOARD = "PATH_HERE/CBconstant.arff";		
+		//PATH_CHECKERBOARD = "PATH_HERE/CBpulse.arff";
+		PATH_CHECKERBOARD = "PATH_HERE/CBsinusoidal.arff";
 	}
 	
 	private UFPRLearningCurveUtils ufprLearningCurveUtils = new UFPRLearningCurveUtils();
@@ -47,7 +47,7 @@ public class CheckerboardTestbed implements MultipleExecutionsTestbed{
 	public void executeTests(int numExecutions) throws Exception{
 		//this.executeTestsDynseKE(numExecutions);
 		//this.executeTestsLCA(numExecutions);
-		this.executeTestsOLA(numExecutions);
+		//this.executeTestsOLA(numExecutions);
 		//this.executeTestsAPriori(numExecutions);
 		//this.executeTestsAPosteriori(numExecutions);
 		//this.executeTestsKU(numExecutions);

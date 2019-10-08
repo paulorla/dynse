@@ -43,8 +43,8 @@ public abstract class AbstractDynseFactory {
 		public static final int DEFAULT_NEIGHBORS_APRIORI = 5;
 		public static final int DEFAULT_NEIGHBORS_APOSTERIORI = 5;
 		
-		public final AbstractClassifierFactory classifierFactory = new NaiveBayesFactory();
-		//public final AbstractClassifierFactory classifierFactory = new HoeffdingTreeFactory();
+		//public final AbstractClassifierFactory classifierFactory = new NaiveBayesFactory();
+		public final AbstractClassifierFactory classifierFactory = new HoeffdingTreeFactory();
 		
 		public final int DEFAULT_POOL_SIZE = 25;
 		public final IPruningEngine<DynseClassifierPruningMetrics> DEFAULT_PRUNING_ENGINE;

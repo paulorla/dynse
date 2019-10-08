@@ -36,7 +36,7 @@ public class NebraskaWeatherTestBed implements MultipleExecutionsTestbed{
 	private static final int NUM_SAMPLES_EACH_BATCH = 30;
 	private static final int NUM_SAMPLES_TRAIN_CLASSIFIER = NUM_SAMPLES_EACH_BATCH*3;//accumulate 3 bathes (V=3)
 	
-	private static final String PATH_DATASET = "/home/paulo/Projetos/experimentos-doutorado/DriftGeneratorsAndData/NebraskaWeather/nebraskaWeather.arff";
+	private static final String PATH_DATASET = "PATH_NEBRASKA_HERE/nebraskaWeather.arff";
 	
 	private final AbstractDynseFactory dynseFactory = new RealConceptDriftDynseFactory();
 

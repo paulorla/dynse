@@ -42,11 +42,10 @@ public class StaggerTestbed implements MultipleExecutionsTestbed{
 	@Override
 	public void executeTests(int numExec) throws Exception{
 		//this.executeTestsLeveragingBag(numExec);
-		//this.executeTestsDynseKE(numExec);
-		//this.executeTestsDynseKE(numExec);
+		this.executeTestsDynseKE(numExec);
 		//this.executeTestsDynseKU(numExec);
 		//this.executeTestsDynseLCA(numExec);
-		this.executeTestsDynseOLA(numExec);
+		//this.executeTestsDynseOLA(numExec);
 		//this.executeTestsDynseKUW(numExec);
 		//this.executeTestsDynseAPriori(numExec);
 		//this.executeTestsDynseAPosteriori(numExec);

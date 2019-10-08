@@ -38,9 +38,9 @@ public class GaussianTestbed implements MultipleExecutionsTestbed{
 	
 	private final UFPRLearningCurveUtils ufprLearningCurveUtils = new UFPRLearningCurveUtils();
 	
-	private static final String PATH_TRAIN_FILE = "/home/paulo/Projetos/experimentos-doutorado/DriftGeneratorsAndData/gaussianDataPolikar/gaussianTrain.arff";
-	private static final String PATH_TEST_FILE = "/home/paulo/Projetos/experimentos-doutorado/DriftGeneratorsAndData/gaussianDataPolikar/gaussianTest.arff";
-	private static final String PATH_PRIORS = "/home/paulo/Projetos/experimentos-doutorado/DriftGeneratorsAndData/gaussianDataPolikar/Gaussian_testing_priors.csv";
+	private static final String PATH_TRAIN_FILE = "PATH_TRAIN_HERE/gaussianTrain.arff";
+	private static final String PATH_TEST_FILE = "PATH_TEST_HERE/gaussianTest.arff";
+	private static final String PATH_PRIORS = "PATH_PRIORS_HERE/Gaussian_testing_priors.csv";
 	
 
 	public void executeTests(int numberExec) throws Exception{

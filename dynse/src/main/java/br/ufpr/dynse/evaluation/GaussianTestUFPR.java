@@ -31,7 +31,7 @@ import moa.core.Measurement;
 import moa.core.ObjectRepository;
 import moa.core.StringUtils;
 import moa.core.TimingUtils;
-import moa.evaluation.LearningCurve;
+import moa.evaluation.preview.LearningCurve;
 import moa.options.ClassOption;
 import moa.streams.InstanceStream;
 import moa.tasks.EvaluatePeriodicHeldOutTest;

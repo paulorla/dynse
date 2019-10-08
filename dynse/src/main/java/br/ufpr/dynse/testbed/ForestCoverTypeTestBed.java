@@ -33,7 +33,7 @@ import moa.tasks.TaskMonitor;
 
 public class ForestCoverTypeTestBed implements MultipleExecutionsTestbed{
 
-	private static final String PATH_DATASET = "/home/paulo/Projetos/experimentos-doutorado/DriftGeneratorsAndData/Forest/covtypeNorm_MOA.arff";
+	private static final String PATH_DATASET = "PATH_FOREST_HERE/covtypeNorm_MOA.arff";
 	
 	private UFPRLearningCurveUtils ufprLearningCurveUtils = new UFPRLearningCurveUtils();
 	private final AbstractDynseFactory dynseFactory = new RealConceptDriftDynseFactory();

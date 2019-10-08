@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import moa.core.Measurement;
-import moa.evaluation.LearningCurve;
+import moa.evaluation.preview.LearningCurve;
 import moa.evaluation.LearningEvaluation;
 
 public class UFPRLearningCurve extends LearningCurve{

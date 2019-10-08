@@ -34,7 +34,7 @@ import moa.classifiers.meta.OzaBagAdwin;
 
 public class NistTestbed implements MultipleExecutionsTestbed{
 	
-	private static final String PATH_DATASET = "/home/paulo/Projetos/experimentos-doutorado/DriftGeneratorsAndData/nist/nist-norm.arff";
+	private static final String PATH_DATASET = "PATH_NIST_HERE/nist-norm.arff";
 	
 	private UFPRLearningCurveUtils ufprLearningCurveUtils = new UFPRLearningCurveUtils();
 	private final AbstractDynseFactory dynseFactory = new VirtualConceptDriftDynseFactory();

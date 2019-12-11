@@ -105,4 +105,13 @@ public class UFPRLearningCurve extends LearningCurve{
 	public double getAverageAccuracy(){
 		return (totalHits/totalInstances)*100;
 	}
+	
+	public void setTotalCorrectlyClassifiedInstances(int totalCorrect) {
+		totalHits=totalCorrect;
+		
+	}
+
+	public void setTotalInstances(int i) {
+		totalInstances=i;
+	}
 }
